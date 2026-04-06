@@ -150,5 +150,58 @@ async function downloadPDF() {
   doc.save("factura.pdf");
 }
 
+
+function cargarProductos() {
+    fetch('http://localhost:3000/productos')
+        .then(res => res.json())
+        .then(data => {
+            const contenedor = document.getElementById("productos");
+            contenedor.innerHTML = "";
+
+            data.forEach(p => {
+                contenedor.innerHTML += `
+                    <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+                        <img src="${p.imagen}" width="100">
+                        <h3>${p.nombre}</h3>
+                        <p>Precio: $${p.precio}</p>
+                        <button onclick="eliminar(${p.id_producto})">Eliminar</button>
+                    </div>
+                `;
+            });
+        });
+}
+
+cargarProductos();
+
+
+function eliminar(id) {
+    fetch(`http://localhost:3000/productos/${id}`, {
+        method: 'DELETE'
+    })
+    .then(() => cargarProductos());
+}
+
+
+function guardarFactura() {
+    console.log("🔥 CLICK DETECTADO");
+
+    fetch('http://localhost:3000/factura', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            cliente: "PRUEBA",
+            direccion: "PRUEBA",
+            carrito: [
+                { price: 3000, qty: 1 }
+            ]
+        })
+    })
+    .then(res => res.text())
+    .then(msg => {
+        console.log("RESPUESTA:", msg);
+        alert(msg);
+    })
+    .catch(err => console.log("ERROR:", err));
+}
 // ================= INICIO =================
 renderCart();
