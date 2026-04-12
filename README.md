@@ -1,0 +1,52 @@
+# 🛒 SUPERMERCADO SUPERWOW
+
+## 📌 Descripción del proyecto
+
+SUPERMERCADO SUPERWOW es una aplicación web full-stack que permite a los clientes visualizar productos, agregarlos a un carrito de compras y generar una factura con sus datos personales (nombre y dirección).
+
+Los datos de las compras se almacenan en una base de datos SQL Server.
+
+---
+
+## 🧱 Arquitectura del sistema
+
+El sistema está compuesto por:
+
+- **Frontend:** Interfaz gráfica donde el usuario navega, ve productos y realiza compras.
+- **Backend:** API que maneja la lógica del negocio (productos, carrito, facturación).
+- **Base de datos:** SQL Server para almacenamiento de clientes, productos y facturas.
+- **Servidor:** Aplicación desplegada en Azure que conecta todos los componentes.
+
+---
+
+## ⚙️ Tecnologías utilizadas
+
+- HTML5
+- CSS3
+- JavaScript
+- Node.js (o tecnología backend usada)
+- Express (si aplica)
+- SQL Server
+- Azure (Hosting en la nube)
+
+---
+
+## 📁 Estructura del proyecto
+
+SUPERMERCADO-SUPERWOW/
+│
+├── frontend/        # Interfaz del usuario (web)
+├── backend/         # API y lógica del sistema
+├── sql/             # Scripts de base de datos SQL Server
+├── server/          # Servidor principal
+├── package.json     # Dependencias del proyecto
+└── README.md        # Documentación del proyecto
+
+---
+
+## 🚀 Instalación del proyecto
+
+### 1. Clonar el repositorio
+
+```bash
+git clone <URL-del-repositorio>
