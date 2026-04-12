@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super-Wow</title>
+<link rel="stylesheet" href="/frontend/css/SUPERMERCADO_SUPERWOW.css">
+</head>
+
+<body>
+
+<header>
+    <img src="/IMAGENES/LOGO_TIENDA.png" class="logo">
+    <div>
+        <h1>🛒 Super-Wow</h1>
+        <p>Supermercado inteligente</p>
+    </div>
+</header>
+
+<!-- BOTÓN CARRITO -->
+<button class="cart-toggle" onclick="toggleCart()">🛒</button>
+
+<div class="container">
+    <div class="products" id="products"></div>
+
+    <div class="cart" id="cart">
+        <h2>Carrito</h2>
+        <input id="cliente" placeholder="Nombre" />
+        <input id="direccion" placeholder="Dirección" />
+        <ul id="cartList"></ul>
+        <p class="total">Total: $<span id="total">0</span></p>
+        <button onclick="saveInvoice()">Facturar</button>
+        <button onclick="downloadPDF()">PDF</button>
+        <p id="message"></p>
+        <div id="invoice" class="invoice"></div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="/frontend/SUPERMERCADO_SUPERWOW.js"></script>
+</body>
+</html>

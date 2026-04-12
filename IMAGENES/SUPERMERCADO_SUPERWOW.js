@@ -152,7 +152,7 @@ async function downloadPDF() {
 
 
 function cargarProductos() {
-    fetch('http://localhost:3000/productos')
+    fetch('http://localhost:3000/api/productos')
         .then(res => res.json())
         .then(data => {
             const contenedor = document.getElementById("productos");
@@ -164,7 +164,7 @@ function cargarProductos() {
                         <img src="${p.imagen}" width="100">
                         <h3>${p.nombre}</h3>
                         <p>Precio: $${p.precio}</p>
-                        <button onclick="eliminar(${p.id_producto})">Eliminar</button>
+                        <button onclick="eliminar(${p.id})">Eliminar</button>
                     </div>
                 `;
             });
@@ -175,7 +175,7 @@ cargarProductos();
 
 
 function eliminar(id) {
-    fetch(`http://localhost:3000/productos/${id}`, {
+    fetch(`http://localhost:3000/api/productos/${id}`, {
         method: 'DELETE'
     })
     .then(() => cargarProductos());
@@ -185,21 +185,28 @@ function eliminar(id) {
 function guardarFactura() {
     console.log("🔥 CLICK DETECTADO");
 
-    fetch('http://localhost:3000/factura', {
+    const payload = {
+        cliente_id: 1,
+        productos: cart.map(item => ({
+            id: item.id || item.id_producto || 0,
+            cantidad: item.qty,
+            precio: item.price || item.precio || 0
+        }))
+    };
+
+    fetch('http://localhost:3000/api/facturas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            cliente: "PRUEBA",
-            direccion: "PRUEBA",
-            carrito: [
-                { price: 3000, qty: 1 }
-            ]
-        })
+        body: JSON.stringify(payload)
     })
-    .then(res => res.text())
-    .then(msg => {
-        console.log("RESPUESTA:", msg);
-        alert(msg);
+    .then(res => res.json())
+    .then(data => {
+        console.log("RESPUESTA:", data);
+        if (data.error) {
+            alert('Error guardando factura: ' + data.error);
+        } else {
+            alert('Factura guardada correctamente. ID: ' + data.id);
+        }
     })
     .catch(err => console.log("ERROR:", err));
 }
