@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test de Carga</title>
+</head>
+<body>
+    <h1>Test de Carga de Recursos</h1>
+
+    <div id="results"></div>
+
+    <script>
+        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+        const results = document.getElementById('results');
+
+        function testResource(url, name) {
+            return fetch(url)
+                .then(response => {
+                    if (response.ok) {
+                        results.innerHTML += `<p style="color: green;">✓ ${name}: OK</p>`;
+                    } else {
+                        results.innerHTML += `<p style="color: red;">✗ ${name}: Error ${response.status}</p>`;
+                    }
+                })
+                .catch(error => {
+                    results.innerHTML += `<p style="color: red;">✗ ${name}: Error - ${error.message}</p>`;
+                });
+        }
+
+        // Test all resources
+        Promise.all([
+            testResource('/frontend/css/SUPERMERCADO_SUPERWOW.css', 'CSS'),
+            testResource('/frontend/SUPERMERCADO_SUPERWOW.js', 'JavaScript'),
+            testResource('/IMAGENES/LOGO_TIENDA.png', 'Logo'),
+            testResource('/IMAGENES/ARROZ_DIANA.png', 'Imagen Arroz'),
+            testResource(`${API_BASE}/api/test`, 'API Backend')
+        ]).then(() => {
+            results.innerHTML += '<p><strong>Recarga la página principal con Ctrl+F5</strong></p>';
+        });
+    </script>
+</body>
+</html>

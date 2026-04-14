@@ -32,6 +32,7 @@ const products = [
 
 // ================= CARRITO =================
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
+const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000/api' : '/api';
 
 // ================= MOSTRAR PRODUCTOS =================
 const container = document.getElementById("products");
@@ -169,7 +170,7 @@ async function saveInvoice() {
 
   try {
     // Crear cliente
-    const clienteResponse = await fetch('http://localhost:3000/api/clientes', {
+    const clienteResponse = await fetch(`${API_BASE}/clientes`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre: cliente, direccion })
@@ -191,7 +192,7 @@ async function saveInvoice() {
     }));
 
     // Crear factura
-    const facturaResponse = await fetch('http://localhost:3000/api/facturas', {
+    const facturaResponse = await fetch(`${API_BASE}/facturas`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ cliente_id, productos })
@@ -213,5 +214,27 @@ async function saveInvoice() {
   } catch (error) {
     console.error('Error:', error);
     document.getElementById("message").textContent = "Error guardando la factura. Revisa la consola.";
+  }
+}
+
+async function cleanDatabase() {
+  try {
+    const response = await fetch(`${API_BASE}/facturas/limpiar`, {
+      method: 'DELETE'
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText);
+    }
+
+    cart = [];
+    saveCart();
+    renderCart();
+    document.getElementById("invoice").innerHTML = "";
+    document.getElementById("message").textContent = "Base de datos limpia. Puedes comenzar de nuevo.";
+  } catch (error) {
+    console.error('Error limpiando la BD:', error);
+    document.getElementById("message").textContent = "Error limpiando la base de datos. Revisa la consola.";
   }
 }

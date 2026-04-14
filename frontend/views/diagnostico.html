@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnóstico SuperWow</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+        .box { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .ok { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Diagnóstico del Sistema</h1>
+
+    <div class="box">
+        <h2>1. Verificar API Backend</h2>
+        <p id="api-status">Verificando...</p>
+    </div>
+
+    <div class="box">
+        <h2>2. Verificar Imágenes</h2>
+        <p>Logo: <img src="/IMAGENES/LOGO_TIENDA.png" width="50" onerror="this.innerHTML='❌ NO CARGÓ'"></p>
+        <p>Arroz: <img src="/IMAGENES/ARROZ_DIANA.png" width="50" onerror="this.innerHTML='❌ NO CARGÓ'"></p>
+    </div>
+
+    <div class="box">
+        <h2>3. Probar Login</h2>
+        <button onclick="testLogin()">Probar Login</button>
+        <p id="login-result"></p>
+    </div>
+
+    <div class="box">
+        <h2>4. Probar Productos</h2>
+        <button onclick="testProductos()">Probar Productos</button>
+        <p id="productos-result"></p>
+    </div>
+
+    <script>
+        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+
+        async function testAPI() {
+            try {
+                const res = await fetch(`${API_BASE}/api/test`);
+                const data = await res.json();
+                document.getElementById('api-status').innerHTML = `
+                    <span class="ok">✓ API RESPONDE</span><br>
+                    ${JSON.stringify(data, null, 2)}
+                `;
+            } catch (err) {
+                document.getElementById('api-status').innerHTML = `
+                    <span class="error">✗ ERROR: ${err.message}</span>
+                `;
+            }
+        }
+
+        async function testLogin() {
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        usuario: 'admin',
+                        password: 'admin123'
+                    })
+                });
+                const data = await res.json();
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+                    document.getElementById('login-result').innerHTML = `
+                        <span class="ok">✓ LOGIN EXITOSO</span><br>
+                        Token guardado: ${data.token.substring(0, 20)}...
+                    `;
+                } else {
+                    document.getElementById('login-result').innerHTML = `
+                        <span class="error">✗ ERROR: ${data.error}</span>
+                    `;
+                }
+            } catch (err) {
+                document.getElementById('login-result').innerHTML = `
+                    <span class="error">✗ ERROR: ${err.message}</span>
+                `;
+            }
+        }
+
+        async function testProductos() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    document.getElementById('productos-result').innerHTML = `
+                        <span class="error">⚠️ Haz login primero</span>
+                    `;
+                    return;
+                }
+
+                const res = await fetch(`${API_BASE}/api/productos`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                document.getElementById('productos-result').innerHTML = `
+                    <span class="ok">✓ PRODUCTOS OBTENIDOS</span><br>
+                    Total: ${data.length} productos<br>
+                    ${data.map(p => `<li>${p.nombre} - $${p.precio}</li>`).join('')}
+                `;
+            } catch (err) {
+                document.getElementById('productos-result').innerHTML = `
+                    <span class="error">✗ ERROR: ${err.message}</span>
+                `;
+            }
+        }
+
+        // Ejecutar prueba de API al cargar
+        window.onload = testAPI;
+    </script>
+</body>
+</html>
